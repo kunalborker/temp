@@ -11,7 +11,6 @@ pipeline {
         }
       }
 
-
      stage ('Analysis') {
  
         sh "mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs spotbugs:spotbugs"
@@ -31,7 +30,6 @@ pipeline {
         def spotbugs = scanForIssues tool: [$class: 'SpotBugs'], pattern: '**/target/spotbugsXml.xml'
         publishIssues issues:[spotbugs]
        }
-   }
 
       stage ('Test') {
  
@@ -46,5 +44,4 @@ pipeline {
         publishIssues issues:[javadoc]
     }
 
-}
 }
