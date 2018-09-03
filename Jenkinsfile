@@ -39,7 +39,7 @@ pipeline {
                         + '*IntegrationTest.xml'])
                 }
             }
-
+}
     stage ('Build Image and Push to Dockerhub'){  
      steps{ 
         sh """
