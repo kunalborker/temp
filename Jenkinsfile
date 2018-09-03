@@ -18,6 +18,7 @@ stage('Tests') {
         } finally {
             junit testResults: 'target/test-classes/*.xml', allowEmptyResults: true
             archiveArtifacts 'target/test-classes/**'
-}
+                }
+         }
 }
 }
