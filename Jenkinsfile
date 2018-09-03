@@ -45,5 +45,5 @@ stages{
         publishIssues issues:[javadoc]
 	}
     }
-
+}
 }
