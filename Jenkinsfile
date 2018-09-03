@@ -11,34 +11,13 @@ pipeline {
         }
       }
 
-      stage ('Unit Test') {
-                steps {
-                    try {
-                        sh 'mvn test -Punit'
-                    } catch(err) {
-                        step([$class: 'JUnitResultArchiver', testResults: 
-                          '**/target/surefire-reports/TEST-*UnitTest.xml'])
-                        throw err
-                    }
-                   step([$class: 'JUnitResultArchiver', testResults: 
-                     '**/target/surefire-reports/TEST-*UnitTest.xml'])
-                }
-            }
 
-stage ('Integration tests') {
-                steps {
-                    try {
-                        sh 'mvn test -Pintegration'
-                    } catch(err) {
-                        step([$class: 'JUnitResultArchiver', testResults: 
-                          '**/target/surefire-reports/TEST-'
-                            + '*IntegrationTest.xml'])
-                        throw err
-                    }
-                    step([$class: 'JUnitResultArchiver', testResults: 
-                      '**/target/surefire-reports/TEST-'
-                        + '*IntegrationTest.xml'])
-                }
-            }
+stage('Tests') {
+        try {
+                sh 'mvn clean test'
+        } finally {
+            junit testResults: 'target/test-classes/*.xml', allowEmptyResults: true
+            archiveArtifacts 'target/test-classes/**'
+}
 }
 }
