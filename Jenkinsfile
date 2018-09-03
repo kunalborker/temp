@@ -11,9 +11,8 @@ pipeline {
         }
       }
 
-      stage ('Tests') {
-       parallel 'Unit tests': {
-                stage('Runing unit tests') {
+      stage ('Unit Test') {
+                steps {
                     try {
                         sh 'mvn test -Punit'
                     } catch(err) {
@@ -24,8 +23,10 @@ pipeline {
                    step([$class: 'JUnitResultArchiver', testResults: 
                      '**/target/surefire-reports/TEST-*UnitTest.xml'])
                 }
-            }, 'Integration tests': {
-                stage('Runing integration tests') {
+            }
+
+stage ('Integration tests') {
+                steps {
                     try {
                         sh 'mvn test -Pintegration'
                     } catch(err) {
