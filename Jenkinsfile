@@ -12,7 +12,6 @@ stages{
       }
 
      stage ('Analysis') {
-          steps{
         sh 'mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs spotbugs:spotbugs'
  
         def checkstyle = scanForIssues tool: [$class: 'CheckStyle'], pattern: '**/target/checkstyle-result.xml'
@@ -29,11 +28,9 @@ stages{
  
         def spotbugs = scanForIssues tool: [$class: 'SpotBugs'], pattern: '**/target/spotbugsXml.xml'
         publishIssues issues:[spotbugs]
-	}
        }
 
       stage ('Test') {
- 	steps{
         sh 'mvn --batch-mode -V -U -e clean test -Dsurefire.useFile=false'
  
         junit testResults: '**/target/surefire-reports/TEST-*.xml'
@@ -44,6 +41,5 @@ stages{
         publishIssues issues:[java]
         publishIssues issues:[javadoc]
 	}
-    }
 }
 }
