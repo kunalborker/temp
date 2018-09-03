@@ -3,13 +3,17 @@ pipeline {
     tools { 
         maven 'localMaven' 
     }
+
+stages{
       stage ('Build'){
+	steps{
           sh 'mvn -f pom.xml clean install deploy'
+           } 
       }
 
      stage ('Analysis') {
- 
-        sh "mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs spotbugs:spotbugs"
+          steps{
+        sh 'mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs spotbugs:spotbugs'
  
         def checkstyle = scanForIssues tool: [$class: 'CheckStyle'], pattern: '**/target/checkstyle-result.xml'
         publishIssues issues:[checkstyle]
@@ -25,11 +29,12 @@ pipeline {
  
         def spotbugs = scanForIssues tool: [$class: 'SpotBugs'], pattern: '**/target/spotbugsXml.xml'
         publishIssues issues:[spotbugs]
+	}
        }
 
       stage ('Test') {
- 
-        sh "mvn --batch-mode -V -U -e clean test -Dsurefire.useFile=false"
+ 	steps{
+        sh 'mvn --batch-mode -V -U -e clean test -Dsurefire.useFile=false'
  
         junit testResults: '**/target/surefire-reports/TEST-*.xml'
  
@@ -38,6 +43,7 @@ pipeline {
          
         publishIssues issues:[java]
         publishIssues issues:[javadoc]
+	}
     }
 
 }
