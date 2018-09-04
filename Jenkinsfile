@@ -11,19 +11,25 @@ pipeline {
              }
           }
      stage ('SonarQube'){
+          steps{
+              echo 'SOnar analysis'
               def scanner = tool "sqs3.2"
 	      withSonarQubeEnv('SonarQube'){
               sh "${scanner}/bin/sonar-scanner"
+              }
            }
     
     stage ('Postbuild'){
+         steps{
          always{ 
                archive "target/**/*"
                junit 'target/surefire-reports/*.xml'
                }
              }
+           }
 
     stage ('Notifications'){
+         steps{
             success{
                    mail(to:"kunal.borkar@globant.com" , subject: "SUCCESS",
                                 body: "Passed")
@@ -37,6 +43,7 @@ pipeline {
                                 body: "Unstable")
                      }
                 }  
+            }
     }                
 }
 }
