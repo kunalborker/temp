@@ -1,4 +1,6 @@
 node {
+
+	agent any
         env.MAVEN_HOME = "${tool 'localMaven'}" 
 	env.JAVA_HOME = "${tool 'localJDK'}"
 
