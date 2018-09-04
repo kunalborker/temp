@@ -12,7 +12,7 @@ pipeline {
           }
      stage ('SonarQube'){
           steps{
-              sh 'mvn sonar:sonar -sonar.host.url=http://127.0.0.1:9000/sonar'
+              sh 'mvn sonar:sonar -Dsonar.host.url=http://127.0.0.1:9000/sonar'
               }
            }
     }                
