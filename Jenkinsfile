@@ -1,23 +1,47 @@
-node {
 
-	agent any
-        env.MAVEN_HOME = "${tool 'localMaven'}" 
-	env.JAVA_HOME = "${tool 'localJDK'}"
-
-        env.PATH="${env.MAVEN_HOME}/bin:${env.PATH}"
-        env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
-
+pipeline {
+  agent any
+    tools { 
+        maven 'localMaven'
+   
     }
+  def scannerHome = tool 'sqs3.2'
+    stages{
       stage ('Build'){
+        steps{
+	  echo 'Maven Build'
           sh 'mvn -f pom.xml clean install deploy'
         }
 
-    stage('SonarQube Analysis') {
+      stage ('SonarQube'){
+        steps{
+          echo 'SonarQube Analysis'
+	  withSonarQubeEnv {
+          sh "${scannerHome}/bin/sonar-scanner"
+  }
+     
+      }
 
-                sh 'env'
-		def scanner = tool "sqs3.2"
-                withSonarQubeEnv('SonarQube') {
-                    sh "${scannerHome}/bin/sonar-scanner"
-                }
-        }
+  postBuild {
+      always { 
+           archive "target/**/*"
+            junit 'target/surefire-reports/*.xml'
+              }
+          }
 
+  notifications {
+            success {
+                   mail(to:"kunal.borkar@globant.com" , subject: "SUCCESS",
+                                body: "Passed")
+                     }
+             failure{
+                  mail(to:"kunal.borkar@globant.com" , subject: "SUCCESS",
+                                body: "Failed")
+                     }
+             unstable {
+                   mail(to:"kunal.borkar@globant.com" , subject: "SUCCESS",
+                                body: "Unstable")
+                     }
+                }                  
+
+}
