@@ -10,6 +10,7 @@ pipeline {
 	      echo 'Maven Build'
               sh 'mvn -f pom.xml clean install deploy'
              }
+          }
      stage ('SonarQube'){
         steps{
               echo 'SonarQube Analysis'
