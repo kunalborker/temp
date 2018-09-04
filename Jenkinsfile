@@ -3,7 +3,6 @@ pipeline {
     tools { 
         maven 'localMaven'
           }
-     def scannerHome = tool 'sqs3.2'
      stages{
      stage ('Build'){
         steps{
@@ -12,22 +11,19 @@ pipeline {
              }
           }
      stage ('SonarQube'){
-        steps{
-              echo 'SonarQube Analysis'
-	      withSonarQubeEnv {
-              sh "${scannerHome}/bin/sonar-scanner"
-              }
+              def scanner = tool "sqs3.2"
+	      withSonarQubeEnv('SonarQube'){
+              sh "${scanner}/bin/sonar-scanner"
            }
-        }
     
-    postBuild{
+    stage ('Postbuild'){
          always{ 
                archive "target/**/*"
                junit 'target/surefire-reports/*.xml'
                }
              }
 
-  notifications{
+    stage ('Notifications'){
             success{
                    mail(to:"kunal.borkar@globant.com" , subject: "SUCCESS",
                                 body: "Passed")
@@ -40,6 +36,6 @@ pipeline {
                    mail(to:"kunal.borkar@globant.com" , subject: "SUCCESS",
                                 body: "Unstable")
                      }
-                }                  
-}
+                }  
+    }                
 }
