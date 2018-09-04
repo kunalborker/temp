@@ -3,6 +3,9 @@ pipeline {
     tools { 
         maven 'localMaven' 
     }
+	define {
+	def scannerHome = tool 'sqs3.2'
+}
     stages{
       stage ('Build'){
         steps{
@@ -13,7 +16,6 @@ pipeline {
 
     stage('SonarQube Analysis') {
             steps {
-                def scannerHome = tool 'sqs3.2'
                 withSonarQubeEnv('SonarQube') {
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
