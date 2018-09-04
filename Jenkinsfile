@@ -15,5 +15,20 @@ pipeline {
               sh 'mvn sonar:sonar -Dsonar.host.url=http://127.0.0.1:9000/sonar'
               }
            }
+
+     stage('archive') {
+      steps {
+        parallel(
+          "Junit": {
+            junit 'target/surefire-reports/*.xml'
+            
+          },
+          "Archive": {
+            archiveArtifacts(artifacts: 'target/greenhouse-*.war', onlyIfSuccessful: true, fingerprint: true)
+          }
+        )
+      }
+    }
+  }
     }                
 }
