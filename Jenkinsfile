@@ -21,6 +21,7 @@ pipeline {
         parallel(
           "Junit": {
             junit 'target/surefire-reports/*.xml'
+	    step( [ $class: 'JacocoPublisher' ] )
             
           },
           "Archive": {
